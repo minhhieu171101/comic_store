@@ -11,7 +11,7 @@ const httpOptions = {
   providedIn: 'root'
 })
 export class AuthService {
-
+  
   constructor(private http:HttpClient) { }
 
   register(username: string, email: string, password: string):Observable<any>{
