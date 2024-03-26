@@ -1,9 +1,9 @@
 package com.example.comic_store.dto;
 
-import jakarta.persistence.Column;
-
 import java.util.Date;
+import lombok.Data;
 
+@Data
 public class ComicDTO {
     private Long id;
 

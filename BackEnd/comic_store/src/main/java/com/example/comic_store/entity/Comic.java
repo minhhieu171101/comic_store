@@ -2,11 +2,14 @@ package com.example.comic_store.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
 import java.util.Date;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "comic")
@@ -14,9 +17,9 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class Comic {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "comic_name")
@@ -45,5 +48,4 @@ public class Comic {
 
     @Column(name = "img_comic")
     private String imgComic;
-
 }
