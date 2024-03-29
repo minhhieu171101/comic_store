@@ -8,6 +8,10 @@ import com.example.comic_store.repository.RoleRepository;
 import com.example.comic_store.repository.UserRepository;
 import com.example.comic_store.repository.UserRoleRepository;
 import com.example.comic_store.service.UserService;
+import java.time.LocalDateTime;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,10 +31,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     public String register(RegisterDTO registerDTO) {
-        UserEntity user = new UserEntity();
-        user.setUsername(registerDTO.getUsername());
+        UserEntity user = modelMapper.map(registerDTO, UserEntity.class);
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
         UserEntity userSave = userRepository.save(user);
 
         Role role = roleRepository.findByRoleName("USER");

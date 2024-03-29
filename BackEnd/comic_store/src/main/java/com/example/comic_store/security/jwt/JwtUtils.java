@@ -10,13 +10,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtGenerator {
+public class JwtUtils {
 
     @Value("${JWT_SECRET}")
     private String jwtSecret;
 
     @Value("${JWT_EXPIRATION}")
     private long jwtExpiration;
+
+    @Value("${jwtCookieName}")
+    private String jwtCookie;
 
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();

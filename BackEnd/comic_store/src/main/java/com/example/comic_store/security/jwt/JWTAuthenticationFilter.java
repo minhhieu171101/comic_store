@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtGenerator jwtGenerator;
+    private JwtUtils jwtGenerator;
 
     @Autowired
     private CustomUserDetailService customUserDetailService;

@@ -1,11 +1,10 @@
 package com.example.comic_store.controller;
 
-
 import com.example.comic_store.dto.AuthResponseDTO;
 import com.example.comic_store.dto.LoginDTO;
 import com.example.comic_store.dto.RegisterDTO;
 import com.example.comic_store.repository.UserRepository;
-import com.example.comic_store.security.jwt.JwtGenerator;
+import com.example.comic_store.security.jwt.JwtUtils;
 import com.example.comic_store.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,7 @@ public class UserController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtGenerator jwtGenerator;
+    private JwtUtils jwtGenerator;
 
     /**
      * Đăng nhập tài khoản hệ thống
@@ -51,8 +50,6 @@ public class UserController {
         String token = jwtGenerator.generateToken(authentication);
         return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
     }
-
-
 
     /**
      * Đăng ký tài khoản hệ thống

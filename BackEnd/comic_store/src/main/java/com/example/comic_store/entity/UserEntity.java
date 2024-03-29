@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.*;
 
 import java.util.Date;
@@ -25,7 +26,7 @@ public class UserEntity {
     private String username;
 
     @Column(name = "fullname")
-    private String fullname;
+    private String fullName;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -44,5 +45,11 @@ public class UserEntity {
 
     @Column(name = "img_user")
     private String imgUser;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 }
