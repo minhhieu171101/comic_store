@@ -9,6 +9,7 @@ import com.example.comic_store.repository.UserRepository;
 import com.example.comic_store.repository.UserRoleRepository;
 import com.example.comic_store.service.UserService;
 import java.time.LocalDateTime;
+import java.util.Random;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,10 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    public String register(RegisterDTO registerDTO) {
+    public String register(RegisterDTO registerDTO, String code) {
+        if (!registerDTO.getCode().equals(code)) {
+            return "code is wrong!";
+        }
         UserEntity user = modelMapper.map(registerDTO, UserEntity.class);
         user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
@@ -51,5 +55,24 @@ public class UserServiceImpl implements UserService {
 
         userRoleRepository.save(userRole);
         return "register successfully!";
+    }
+
+
+    /**
+     * sinh ra code cho việc xác thực eaml
+     *
+     * @return String là mã code sau khi random 6 chữ số
+     * @modifiedBy
+     * @modifiedDate
+     * @vesion 1.0
+     */
+    @Override
+    public String generateCode() {
+        Random random = new Random();
+        StringBuilder code = new StringBuilder();
+        for (int num = 0; num < 6; num ++) {
+            code.append(random.nextInt(0, 10));
+        }
+        return code.toString();
     }
 }

@@ -25,6 +25,7 @@ public class JwtUtils {
         String username = authentication.getName();
         Date currentDate = new Date();
         Date expiredDate = new Date(currentDate.getTime() + jwtExpiration);
+
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())

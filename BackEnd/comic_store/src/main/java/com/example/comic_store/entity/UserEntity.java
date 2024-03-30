@@ -40,8 +40,8 @@ public class UserEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "gmail")
-    private String gmail;
+    @Column(name = "email")
+    private String email;
 
     @Column(name = "img_user")
     private String imgUser;
