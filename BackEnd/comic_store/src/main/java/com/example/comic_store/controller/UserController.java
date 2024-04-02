@@ -5,17 +5,19 @@ import com.example.comic_store.dto.AuthResponseDTO;
 import com.example.comic_store.dto.LoginDTO;
 import com.example.comic_store.dto.MailDTO;
 import com.example.comic_store.dto.RegisterDTO;
-import com.example.comic_store.repository.UserRepository;
+import com.example.comic_store.dto.ServiceResult;
 import com.example.comic_store.security.jwt.JwtUtils;
 import com.example.comic_store.service.MailService;
 import com.example.comic_store.service.UserService;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,13 +57,26 @@ public class UserController {
      * @vesion 1.0
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
-                loginDTO.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtGenerator.generateToken(authentication);
-        return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
+    public ResponseEntity<ServiceResult<String>> login(@RequestBody LoginDTO loginDTO) {
+        ServiceResult<String> result = new ServiceResult<>();
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
+                            loginDTO.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String token = jwtGenerator.generateToken(authentication);
+            result.setData(token);
+            result.setMessage("Đăng nhập thành công!");
+            result.setStatus(HttpStatus.OK);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.error("err");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Đăng nhập không thành công");
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -72,17 +87,23 @@ public class UserController {
      * @vesion 1.0
      */
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<ServiceResult<String>> register(@RequestBody RegisterDTO registerDTO) {
+        ServiceResult<String> result = new ServiceResult<>();
         try {
             if (Math.abs(ChronoUnit.SECONDS.between(LocalDateTime.now(), this.codeGeneratedTime)) > 60) {
-                return new ResponseEntity<>("time is out of 60", HttpStatus.BAD_REQUEST);
+                result.setStatus(HttpStatus.BAD_REQUEST);
+                result.setMessage("time is out of 60");
+                return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
             }
-            String message = userService.register(registerDTO, tempGeneratedCode);
-            return new ResponseEntity<>(message, HttpStatus.OK);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage(userService.register(registerDTO, tempGeneratedCode));
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             logger.error("err");
-            return new ResponseEntity<>("err", HttpStatus.BAD_REQUEST);
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Mã tài khoản sai");
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -90,24 +111,36 @@ public class UserController {
      * Gửi email xác thực
      *
      * @param mailDTO chứa thông tin về mail người đăng ký
-     * @return ResponseEntity<String> trả về tin nhắn
+     * @return CompletableFuture<ResponseEntity<ServiceResult<String>>> trả về tin nhắn
      * @modifiedBy
      * @modifiedDate
      * @vesion 1.0
      */
     @PostMapping("/send")
-    public ResponseEntity<String> sendMailAuthorization(@RequestBody MailDTO mailDTO) {
-        this.tempGeneratedCode = userService.generateCode();
-        this.codeGeneratedTime = LocalDateTime.now();
+    @Async
+    public CompletableFuture<ResponseEntity<ServiceResult<String>>> sendMailAuthorization(@RequestBody MailDTO mailDTO) {
+        ServiceResult<String> result = new ServiceResult<>();
+        try {
+            this.tempGeneratedCode = userService.generateCode();
+            this.codeGeneratedTime = LocalDateTime.now();
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Send email successfully!");
 
-        mailDTO.setSubject(LoginConstants.SUBJECT_VALID);
-        String messageBody = LoginConstants.INTRO_MAIL
-                + "\n"
-                + this.tempGeneratedCode
-                + "\n "
-                + LoginConstants.END_MAIL;
-        mailDTO.setMessage(messageBody);
-        mailService.sendMail(mailDTO);
-        return new ResponseEntity<>("Successfully send mail", HttpStatus.OK);
+            mailDTO.setSubject(LoginConstants.SUBJECT_VALID);
+            String messageBody = LoginConstants.INTRO_MAIL
+                    + "\n"
+                    + this.tempGeneratedCode
+                    + "\n "
+                    + LoginConstants.END_MAIL;
+            mailDTO.setMessage(messageBody);
+            mailService.sendMail(mailDTO);
+            return CompletableFuture.completedFuture(new ResponseEntity<>(result, HttpStatus.OK));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.error("Send email failed!");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Send email err!");
+            return CompletableFuture.completedFuture(new ResponseEntity<>(result, HttpStatus.BAD_REQUEST));
+        }
     }
 }
