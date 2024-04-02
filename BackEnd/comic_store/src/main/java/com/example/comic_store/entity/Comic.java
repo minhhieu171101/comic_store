@@ -65,4 +65,8 @@ public class Comic extends BaseEntity {
 //    Trạng thái của cuốn truyện: 1 còn hàng, 0 hết hàng
     @Column(name = "status")
     private Boolean status;
+
+    @Column(name = "img_comic")
+    private String imgComic;
+
 }
