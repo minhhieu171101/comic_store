@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -49,6 +50,9 @@ public class UserController {
 
     private LocalDateTime codeGeneratedTime;
 
+    @Value("${jwtCookieName}")
+    private String tokenName;
+
     /**
      * Đăng nhập tài khoản hệ thống
      *
@@ -57,15 +61,19 @@ public class UserController {
      * @vesion 1.0
      */
     @PostMapping("/login")
-    public ResponseEntity<ServiceResult<String>> login(@RequestBody LoginDTO loginDTO) {
-        ServiceResult<String> result = new ServiceResult<>();
+    public ResponseEntity<ServiceResult<AuthResponseDTO>> login(@RequestBody LoginDTO loginDTO) {
+        ServiceResult<AuthResponseDTO> result = new ServiceResult<>();
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDTO.getUsername(),
                             loginDTO.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtGenerator.generateToken(authentication);
-            result.setData(token);
+
+            AuthResponseDTO authResponseDTO = new AuthResponseDTO(token);
+            authResponseDTO.setTokenName(tokenName);
+
+            result.setData(authResponseDTO);
             result.setMessage("Đăng nhập thành công!");
             result.setStatus(HttpStatus.OK);
             return new ResponseEntity<>(result, HttpStatus.OK);

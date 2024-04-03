@@ -3,7 +3,7 @@ package com.example.comic_store.dto;
 import lombok.Data;
 
 @Data
-public class ComicDTO {
+public class ComicDetailDTO {
     private Long id;
     private String comicName;
     private String authorName;
@@ -12,8 +12,6 @@ public class ComicDTO {
     private Long sale;
     private Long residualQuantity;
     private String imgComic;
-    private int page;
-    private int pageSize;
+    private Integer status;
     private Long typeComicId;
-
 }

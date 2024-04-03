@@ -1,6 +1,7 @@
 package com.example.comic_store.service.impl;
 
 import com.example.comic_store.dto.ComicDTO;
+import com.example.comic_store.dto.ComicDetailDTO;
 import com.example.comic_store.entity.Comic;
 import com.example.comic_store.repository.ComicRepository;
 import com.example.comic_store.service.ComicService;
@@ -22,9 +23,22 @@ public class ComicServiceImpl implements ComicService {
 
     public List<ComicDTO> getListComicLanding(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Comic> comicPage = comicRepository.findAll(pageable);
+        Page<Comic> comicPage = comicRepository.getComicLandingPage(pageable);
         return comicPage.stream()
                 .map(element -> modelMapper.map(element, ComicDTO.class))
                 .toList();
+    }
+
+    @Override
+    public ComicDetailDTO getComicBy(Long id) {
+        Comic comic = comicRepository.findById(id).orElse(null);
+        return modelMapper.map(comic, ComicDetailDTO.class);
+    }
+
+    @Override
+    public Page<ComicDTO> getPageComic(int page, int pageSize, Long typeComicId) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Comic> comicPage = comicRepository.getAllByTypeComicIdOrderByCreatedAt(pageable, typeComicId);
+        return comicPage.map(element -> modelMapper.map(element, ComicDTO.class));
     }
 }
