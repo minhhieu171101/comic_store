@@ -36,6 +36,12 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/comic/**").permitAll()
                 .requestMatchers("/api/type-comic/**").permitAll()
+                .requestMatchers("/api/comic/comic-management-admin").hasRole("ADMIN")
+                .requestMatchers("/api/comic/delete-comic").hasRole("ADMIN")
+                .requestMatchers("/api/comic/update-comic").hasRole("ADMIN")
+                .requestMatchers("/api/auth/page-user").hasRole("ADMIN")
+                .requestMatchers("/api/comic-order/statistic").hasRole("ADMIN")
+                .requestMatchers("/api/comment/delete-comment").hasRole("ADMIN")
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

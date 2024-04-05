@@ -41,6 +41,7 @@ public class UserOrderServiceImpl implements UserOrderService {
         userOrder.setCreatedAt(LocalDateTime.now());
         userOrder.setUpdatedAt(LocalDateTime.now());
         userOrder.setOrderDate(LocalDate.now());
+        userOrder.setStatus(userOrderDTO.getStatus());
         UserOrder userResult = userOrderRepository.save(userOrder);
 
         List<ComicOrder> comicOrderList = comicOrderRepository.findAllById(userOrderDTO.getComicOrders());

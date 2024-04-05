@@ -3,10 +3,12 @@ package com.example.comic_store.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.util.Collection;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,9 +27,14 @@ public class JwtUtils {
         String username = authentication.getName();
         Date currentDate = new Date();
         Date expiredDate = new Date(currentDate.getTime() + jwtExpiration);
-
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String role = "";
+        for (GrantedAuthority authority : authorities) {
+            role = authority.getAuthority();
+        }
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(expiredDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)

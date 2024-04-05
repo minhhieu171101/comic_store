@@ -186,4 +186,12 @@ public class UserController {
         Page<UserDTO> userDTOPage = userService.getUserPage(userDTO);
         return new ResponseEntity<>(userDTOPage, HttpStatus.OK);
     }
+
+
+    @PostMapping("/update-user")
+    public ResponseEntity<ServiceResult<String>> updateUserInfo(@RequestBody UserDTO userDTO) {
+        ServiceResult<String> result = userService.updateUserInfo(userDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
+

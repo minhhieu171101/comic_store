@@ -1,6 +1,7 @@
 package com.example.comic_store.service;
 
 import com.example.comic_store.dto.RegisterDTO;
+import com.example.comic_store.dto.ServiceResult;
 import com.example.comic_store.dto.UserDTO;
 import org.springframework.data.domain.Page;
 
@@ -9,4 +10,5 @@ public interface UserService {
     String generateCode();
     UserDTO getUserInfo(String username);
     Page<UserDTO> getUserPage(UserDTO userDTO);
+    ServiceResult<String> updateUserInfo(UserDTO userDTO);
 }

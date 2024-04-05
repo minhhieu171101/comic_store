@@ -2,6 +2,7 @@ package com.example.comic_store.service.impl;
 
 import com.example.comic_store.dto.PurchaseOrderDTO;
 import com.example.comic_store.dto.RegisterDTO;
+import com.example.comic_store.dto.ServiceResult;
 import com.example.comic_store.dto.UserDTO;
 import com.example.comic_store.entity.Role;
 import com.example.comic_store.entity.UserEntity;
@@ -12,6 +13,7 @@ import com.example.comic_store.repository.UserRoleRepository;
 import com.example.comic_store.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Random;
+import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +66,6 @@ public class UserServiceImpl implements UserService {
         return "register successfully!";
     }
 
-
     /**
      * sinh ra code cho việc xác thực eaml
      *
@@ -95,5 +97,26 @@ public class UserServiceImpl implements UserService {
                 Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<UserEntity> userEntityPage = userRepository.findAll(pageable);
         return userEntityPage.map(element -> modelMapper.map(element, UserDTO.class));
+    }
+
+    @Override
+    public ServiceResult<String> updateUserInfo(UserDTO userDTO) {
+        UserEntity user = userRepository.findById(userDTO.getId()).orElse(null);
+        if (user != null) {
+            user.setImgUser(userDTO.getImgUser());
+            user.setUsername(userDTO.getUsername());
+            user.setAddress(userDTO.getAddress());
+            user.setBirthday(userDTO.getBirthday());
+            user.setEmail(userDTO.getEmail());
+            user.setGender(userDTO.getGender());
+            user.setFullName(userDTO.getFullName());
+            user.setPhone(userDTO.getPhone());
+            user.setUpdatedAt(LocalDateTime.now());
+            userRepository.save(user);
+        }
+        ServiceResult<String> result = new ServiceResult<>();
+        result.setStatus(HttpStatus.OK);
+        result.setMessage("Cập nhật thông tin người dùng thành công!");
+        return result;
     }
 }
