@@ -38,4 +38,10 @@ public class UserOrder {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "status")
+    private Integer status;
+
+    @Column(name = "total_price")
+    private Long totalPrice;
 }

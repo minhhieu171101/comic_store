@@ -6,6 +6,8 @@ import com.example.comic_store.entity.Comment;
 import com.example.comic_store.repository.CommentRepository;
 import com.example.comic_store.service.CommentService;
 import com.example.comic_store.service.mapper.CommentMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ServiceResult<String> updateComment(CommentDTO commentDTO) {
         Comment comment = modelMapper.map(commentDTO, Comment.class);
+        comment.setDatePost(LocalDateTime.now());
         commentRepository.save(comment);
         ServiceResult<String> result = new ServiceResult<>();
         result.setStatus(HttpStatus.OK);

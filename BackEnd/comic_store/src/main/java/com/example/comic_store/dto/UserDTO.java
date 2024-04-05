@@ -13,4 +13,7 @@ public class UserDTO {
     private String phone;
     private String email;
     private String imgUser;
+    private Integer gender;
+    private int page;
+    private int pageSize;
 }

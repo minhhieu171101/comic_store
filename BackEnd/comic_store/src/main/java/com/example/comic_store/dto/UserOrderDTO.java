@@ -10,5 +10,7 @@ public class UserOrderDTO {
     private String note;
     private Long userId;
     private List<Long> comicOrders;
+    private Integer status;
+    private Long totalPrice;
 }
 

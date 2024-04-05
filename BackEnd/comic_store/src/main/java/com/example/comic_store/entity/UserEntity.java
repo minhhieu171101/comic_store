@@ -52,4 +52,7 @@ public class UserEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "gender")
+    private Integer gender;
+
 }

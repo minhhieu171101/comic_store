@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -178,5 +179,11 @@ public class UserController {
             result.setMessage("Get info err!");
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/page-user")
+    public ResponseEntity<Page<UserDTO>> getPageUser(@RequestBody UserDTO userDTO) {
+        Page<UserDTO> userDTOPage = userService.getUserPage(userDTO);
+        return new ResponseEntity<>(userDTOPage, HttpStatus.OK);
     }
 }

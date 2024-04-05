@@ -1,5 +1,6 @@
 package com.example.comic_store.service.impl;
 
+import com.example.comic_store.dto.PurchaseOrderDTO;
 import com.example.comic_store.dto.RegisterDTO;
 import com.example.comic_store.dto.UserDTO;
 import com.example.comic_store.entity.Role;
@@ -15,6 +16,10 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -81,5 +86,14 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserInfo(String username) {
         UserEntity user = userRepository.findByUsername(username).orElse(null);
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @Override
+    public Page<UserDTO> getUserPage(UserDTO userDTO) {
+        Pageable pageable = PageRequest.of(userDTO.getPage(),
+                userDTO.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<UserEntity> userEntityPage = userRepository.findAll(pageable);
+        return userEntityPage.map(element -> modelMapper.map(element, UserDTO.class));
     }
 }

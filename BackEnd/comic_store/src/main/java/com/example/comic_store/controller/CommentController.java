@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/api/comment")
 public class CommentController {
 
     @Autowired
@@ -31,13 +31,13 @@ public class CommentController {
         return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
     }
 
-    @PostMapping("/update-comic")
+    @PostMapping("/update-comment")
     public ResponseEntity<ServiceResult<String>> updateComment(@RequestBody CommentDTO commentDTO) {
         ServiceResult<String> result = commentService.updateComment(commentDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/delete-comic")
+    @PostMapping("/delete-comment")
     public ResponseEntity<ServiceResult<String>> deleteComment(@RequestBody CommentDTO commentDTO) {
         ServiceResult<String> result = commentService.deleteComment(commentDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
