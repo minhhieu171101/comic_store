@@ -1,6 +1,7 @@
 package com.example.comic_store.service.impl;
 
 import com.example.comic_store.dto.RegisterDTO;
+import com.example.comic_store.dto.UserDTO;
 import com.example.comic_store.entity.Role;
 import com.example.comic_store.entity.UserEntity;
 import com.example.comic_store.entity.UserRole;
@@ -74,5 +75,11 @@ public class UserServiceImpl implements UserService {
             code.append(random.nextInt(0, 10));
         }
         return code.toString();
+    }
+
+    @Override
+    public UserDTO getUserInfo(String username) {
+        UserEntity user = userRepository.findByUsername(username).orElse(null);
+        return modelMapper.map(user, UserDTO.class);
     }
 }

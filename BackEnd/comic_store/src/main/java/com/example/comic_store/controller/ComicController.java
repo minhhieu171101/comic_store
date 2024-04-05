@@ -23,12 +23,13 @@ public class ComicController {
     @Autowired
     private ComicService comicService;
 
-    @GetMapping("/list-comic/{page}/{pageSize}")
-    public ResponseEntity<List<ComicDTO>> getListComicDTO(@PathVariable("page") int page,
-                                                          @PathVariable("pageSize") int pageSize) {
+    @PostMapping("/list-comic")
+    public ResponseEntity<List<ComicDTO>> getListComicDTO(@RequestBody ComicDTO comicDTO) {
         try {
-            List<ComicDTO> comicDTOList = comicService.getListComicLanding(page, pageSize);
+            List<ComicDTO> comicDTOList = comicService
+                    .getListComicLanding(comicDTO.getPage(), comicDTO.getPageSize());
             return new ResponseEntity<>(comicDTOList, HttpStatus.OK);
+
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.OK);
@@ -36,7 +37,7 @@ public class ComicController {
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<ComicDetailDTO> getListComicDTO(@PathVariable("id") Long id) {
+    public ResponseEntity<ComicDetailDTO> getDetailComicDTO(@PathVariable("id") Long id) {
         try {
             ComicDetailDTO comicDetailDTO = comicService.getComicBy(id);
             return new ResponseEntity<>(comicDetailDTO, HttpStatus.OK);
@@ -46,8 +47,8 @@ public class ComicController {
         }
     }
 
-    @PostMapping("/list-comic")
-    public ResponseEntity<Page<ComicDTO>> getListComicDTO(@RequestBody ComicDTO comicDTO) {
+    @PostMapping("/page-comic")
+    public ResponseEntity<Page<ComicDTO>> getPageComicDTO(@RequestBody ComicDTO comicDTO) {
         try {
             Page<ComicDTO> comicDTOPage = comicService.getPageComic(comicDTO.getPage(), comicDTO.getPageSize(), comicDTO.getTypeComicId());
             return new ResponseEntity<>(comicDTOPage, HttpStatus.OK);

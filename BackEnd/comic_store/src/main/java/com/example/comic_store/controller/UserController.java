@@ -6,6 +6,7 @@ import com.example.comic_store.dto.LoginDTO;
 import com.example.comic_store.dto.MailDTO;
 import com.example.comic_store.dto.RegisterDTO;
 import com.example.comic_store.dto.ServiceResult;
+import com.example.comic_store.dto.UserDTO;
 import com.example.comic_store.security.jwt.JwtUtils;
 import com.example.comic_store.service.MailService;
 import com.example.comic_store.service.UserService;
@@ -72,7 +73,6 @@ public class UserController {
 
             AuthResponseDTO authResponseDTO = new AuthResponseDTO(token);
             authResponseDTO.setTokenName(tokenName);
-
             result.setData(authResponseDTO);
             result.setMessage("Đăng nhập thành công!");
             result.setStatus(HttpStatus.OK);
@@ -142,13 +142,41 @@ public class UserController {
                     + LoginConstants.END_MAIL;
             mailDTO.setMessage(messageBody);
             mailService.sendMail(mailDTO);
-            return CompletableFuture.completedFuture(new ResponseEntity<>(result, HttpStatus.OK));
+            return CompletableFuture
+                    .completedFuture(new ResponseEntity<>(result, HttpStatus.OK));
+
         } catch (Exception ex) {
             ex.printStackTrace();
             logger.error("Send email failed!");
             result.setStatus(HttpStatus.BAD_REQUEST);
             result.setMessage("Send email err!");
-            return CompletableFuture.completedFuture(new ResponseEntity<>(result, HttpStatus.BAD_REQUEST));
+            return CompletableFuture
+                    .completedFuture(new ResponseEntity<>(result, HttpStatus.BAD_REQUEST));
+        }
+    }
+
+    /**
+     * Lấy thông tin người dùng
+     *
+     * @param userDTO chứa tên người dùng
+     * @return ServiceResult<UserDTO> chứa thông tin người dùng
+     * @vesion 1.0
+     */
+    @PostMapping("/user")
+    public ResponseEntity<ServiceResult<UserDTO>> getUserInfo(@RequestBody UserDTO userDTO) {
+        ServiceResult<UserDTO> result = new ServiceResult<>();
+        try {
+            UserDTO userResponse = userService.getUserInfo(userDTO.getUsername());
+            result.setData(userResponse);
+            result.setStatus(HttpStatus.OK);
+            result.setMessage("Get info successfully!");
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            logger.error("Send email failed!");
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setMessage("Get info err!");
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }
 }
