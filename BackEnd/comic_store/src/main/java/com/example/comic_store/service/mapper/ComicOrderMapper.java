@@ -1,6 +1,7 @@
 package com.example.comic_store.service.mapper;
 
 import com.example.comic_store.dto.ComicOrderDTO;
+import com.example.comic_store.entity.ComicOrder;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -27,5 +28,14 @@ public class ComicOrderMapper {
             comicOrderDTOList.add(toComicOrderDTO(object));
         }
         return comicOrderDTOList;
+    }
+
+    public ComicOrder toComicOrder(ComicOrderDTO comicOrderDTO) {
+        ComicOrder comicOrder = new ComicOrder();
+        comicOrder.setComicId(comicOrderDTO.getComicId());
+        comicOrder.setUserId(comicOrderDTO.getUserId());
+        comicOrder.setQuantity(comicOrderDTO.getQuantity());
+        comicOrder.setTotalPrice(comicOrderDTO.getTotalPrice());
+        return comicOrder;
     }
 }

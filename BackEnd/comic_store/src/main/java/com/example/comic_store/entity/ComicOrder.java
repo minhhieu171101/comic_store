@@ -21,7 +21,7 @@ public class ComicOrder extends BaseEntity{
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "userOrderId")
+    @Column(name = "user_order_id")
     private Long userOrderId;
 
     @Column(name = "quantity")

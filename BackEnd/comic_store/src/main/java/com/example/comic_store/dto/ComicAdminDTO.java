@@ -1,18 +1,18 @@
 package com.example.comic_store.dto;
 
+import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class ComicDTO {
+public class ComicAdminDTO {
     private Long id;
     private String comicName;
     private String authorName;
-    private String contents;
+    private String imgComic;
+    private String typeName;
+    private LocalDate releaseDate;
     private Long price;
     private Long sale;
+    private String contents;
     private Long residualQuantity;
-    private String imgComic;
-    private int page;
-    private int pageSize;
-    private Long typeComicId;
 }

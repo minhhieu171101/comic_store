@@ -3,6 +3,7 @@ package com.example.comic_store.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import lombok.*;
 
 import java.util.Date;
@@ -24,7 +25,7 @@ public class Comic extends BaseEntity {
 
 //    Ngày phát hành
     @Column(name = "release_date")
-    private Date releaseDate;
+    private LocalDate releaseDate;
 
 //    Tập của cuốn truyện
     @Column(name = "episode")

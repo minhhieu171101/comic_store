@@ -1,7 +1,9 @@
 package com.example.comic_store.controller;
 
+import com.example.comic_store.dto.ComicAdminDTO;
 import com.example.comic_store.dto.ComicDTO;
 import com.example.comic_store.dto.ComicDetailDTO;
+import com.example.comic_store.dto.ServiceResult;
 import com.example.comic_store.service.ComicService;
 import java.util.List;
 
@@ -56,5 +58,22 @@ public class ComicController {
             ex.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/comic-management-admin")
+    public ResponseEntity<Page<ComicAdminDTO>> getPageComicAdmin(@RequestBody ComicDTO comicDTO) {
+        Page<ComicAdminDTO> comicAdminDTOPage = comicService
+                .getComicAdmin(comicDTO.getPage(), comicDTO.getPageSize());
+        return new ResponseEntity<>(comicAdminDTOPage, HttpStatus.OK);
+    }
+
+    @PostMapping("/update-comic")
+    public ResponseEntity<ServiceResult<String>> updateComic(@RequestBody ComicAdminDTO comicAdminDTO) {
+        return new ResponseEntity<>(comicService.updateComic(comicAdminDTO), HttpStatus.OK);
+    }
+
+    @PostMapping("/delete-comic")
+    public ResponseEntity<ServiceResult<String>> deleteComic(@RequestBody ComicAdminDTO comicAdminDTO) {
+        return new ResponseEntity<>(comicService.deleteComic(comicAdminDTO), HttpStatus.OK);
     }
 }

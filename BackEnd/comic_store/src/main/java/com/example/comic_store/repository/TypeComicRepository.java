@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TypeComicRepository extends JpaRepository<TypeComic, Long> {
+    TypeComic findTypeComicByTypeName(String typeName);
 }

@@ -3,9 +3,8 @@ package com.example.comic_store.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.*;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "comment")
@@ -15,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Comment extends BaseEntity {
     @Column(name = "date_post")
-    private Date datePost;
+    private LocalDateTime datePost;
 
     @Column(name = "content")
     private String content;
@@ -25,4 +24,7 @@ public class Comment extends BaseEntity {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @Column(name = "comic_id", nullable = false)
+    private Long comicId;
 }

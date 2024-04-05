@@ -1,6 +1,7 @@
 package com.example.comic_store.repository;
 
 import com.example.comic_store.entity.ComicOrder;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +30,19 @@ public interface ComicOrderRepository extends JpaRepository<ComicOrder, Long> {
                     "ORDER BY co.updatedAt DESC"
     )
     List<Object[]> getAllByUsername(@Param("username") String username);
+
+    @Query(
+            value = "SELECT " +
+                    "tc.typeName, " +
+                    "SUM(co.quantity) AS totalSold, " +
+                    "SUM(co.totalPrice) AS totalIncome " +
+                    "FROM ComicOrder co " +
+                    "INNER JOIN Comic c ON co.comicId = c.id " +
+                    "INNER JOIN TypeComic tc ON c.typeComicId = tc.id " +
+                    "WHERE co.status = 1 " +
+                    "AND co.updatedAt >= :beforeMonth " +
+                    "GROUP BY tc.id " +
+                    "ORDER BY totalIncome"
+    )
+    List<Object[]> getStatisticMonth(@Param("beforeMonth")LocalDateTime oneMonth);
 }
