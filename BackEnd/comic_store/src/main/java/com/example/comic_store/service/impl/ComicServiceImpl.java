@@ -10,15 +10,26 @@ import com.example.comic_store.repository.ComicRepository;
 import com.example.comic_store.repository.TypeComicRepository;
 import com.example.comic_store.service.ComicService;
 import com.example.comic_store.service.mapper.ComicAdminMapper;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ComicServiceImpl implements ComicService {
@@ -34,6 +45,12 @@ public class ComicServiceImpl implements ComicService {
 
     @Autowired
     private TypeComicRepository typeComicRepository;
+
+    @Value("${COMIC_FOLDER_PATH}")
+    private String folderPath;
+
+    @Value("${COMIC_TARGET_FOLDER_PATH}")
+    private String folderTargetPath;
 
     public List<ComicDTO> getListComicLanding(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize);
@@ -54,7 +71,7 @@ public class ComicServiceImpl implements ComicService {
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Comic> comicPage;
         if (typeComicId != null) {
-            comicPage = comicRepository.getAllByTypeComicIdOrderByCreatedAt(pageable, typeComicId);
+            comicPage = comicRepository.getAllByTypeComicId(pageable, "s" + typeComicId + "e");
         } else {
             comicPage = comicRepository.getComicLandingPage(pageable);
         }
@@ -69,12 +86,78 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
-    public ServiceResult<String> updateComic(ComicAdminDTO comicAdminDTO) {
-        TypeComic typeComic = typeComicRepository.findTypeComicByTypeName(comicAdminDTO.getTypeName());
-        Comic comic = comicAdminMapper.toComic(comicAdminDTO);
-        if (typeComic != null) {
-            comic.setTypeComicId(typeComic.getId());
+    public ServiceResult<String> updateComic(ComicAdminDTO comicAdminDTO, MultipartFile file) {
+        // thực hiện lấy ra tên các thể loại truyện
+        String[] typeNames = comicAdminDTO.getTypeName()
+                .trim()
+                .toLowerCase()
+                .split(",");
+
+        // Thực hiện chuẩn hóa dữ liệu tên thể loại truyện
+        List<String> typeNameList = Arrays.stream(typeNames)
+                .map(String::trim)
+                .toList();
+
+        // Lấy ra các thể loại truyện đã tạo
+        List<TypeComic> typeComicsExist = typeComicRepository
+                .findAllByTypeNameIn(typeNameList)
+                .stream()
+                .peek(typeComic -> typeComic.setTypeName(typeComic.getTypeName().toLowerCase()))
+                .collect(Collectors.toList());
+
+        // Lấy ra tên các thể loại truyện đã tạo
+        Set<String> typeNameComicExist = typeComicsExist.stream()
+                .map(TypeComic::getTypeName)
+                .collect(Collectors.toSet());
+
+        //  Lấy ra tên các thể loại truyện chưa tồn tại
+        List<String> typeComicNameNotExist = typeNameList.stream()
+                .filter(typename -> ! typeNameComicExist.contains(typename))
+                .toList();
+
+        if (! typeComicNameNotExist.isEmpty()) {
+            List<TypeComic> typeComicsCreate = new ArrayList<>();
+
+            // Tạo các thể loại truyện mới
+            for (String typeName : typeComicNameNotExist) {
+                TypeComic typeComic = new TypeComic();
+                typeComic.setTypeName(typeName);
+                typeComic.setCreatedAt(LocalDateTime.now());
+                typeComic.setUpdatedAt(LocalDateTime.now());
+                typeComicsCreate.add(typeComic);
+            }
+            // Lấy ra toàn bộ thể loại của truyện
+            List<TypeComic> typeComicsReturn = typeComicRepository.saveAll(typeComicsCreate);
+            typeComicsExist.addAll(typeComicsReturn);
         }
+
+        Comic comic = comicAdminMapper.toComic(comicAdminDTO);
+
+        // Cập nhật thể loại truyện
+        comic.setTypeComicIds(
+                typeComicsExist
+                        .stream()
+                        .map(TypeComic::getId)
+                        .map(typeId -> "s" + typeId + "e")
+                        .collect(Collectors.joining(","))
+        );
+
+        // Thực hiện thêm hoặc cập nhật ảnh
+        if (file != null) {
+            comic.setImgComic(file.getOriginalFilename());
+            Path path = Path.of(folderPath + file.getOriginalFilename());
+            Path pathTarget = Path.of(folderTargetPath + file.getOriginalFilename());
+            try {
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(file.getInputStream(), pathTarget, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        comic.setCreatedAt(LocalDateTime.now());
+        comic.setUpdatedAt(LocalDateTime.now());
+
         comicRepository.save(comic);
         ServiceResult<String> result = new ServiceResult<>();
         result.setStatus(HttpStatus.OK);

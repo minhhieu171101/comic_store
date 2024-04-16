@@ -15,4 +15,5 @@ public class ComicDTO {
     private int page;
     private int pageSize;
     private Long typeComicId;
+    private String typeComicIds;
 }

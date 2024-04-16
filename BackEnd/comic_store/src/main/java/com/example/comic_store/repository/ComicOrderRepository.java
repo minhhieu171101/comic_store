@@ -10,39 +10,39 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComicOrderRepository extends JpaRepository<ComicOrder, Long> {
-    @Query(
-            value = "SELECT " +
-                    "   u.id," +
-                    "   c.id," +
-                    "   co.id," +
-                    "   c.comicName," +
-                    "   c.imgComic," +
-                    "   co.quantity," +
-                    "   co.totalPrice," +
-                    "   tc.typeName " +
-                    "FROM UserEntity u " +
-                    "LEFT JOIN ComicOrder co ON u.id = co.userId " +
-                    "INNER JOIN Comic c ON co.comicId = c.id " +
-                    "INNER JOIN TypeComic tc ON c.typeComicId = tc.id " +
-                    "WHERE u.username = :username " +
-                    "AND co.status = 0 " +
-                    "GROUP BY u.id, co.id, c.id " +
-                    "ORDER BY co.updatedAt DESC"
-    )
-    List<Object[]> getAllByUsername(@Param("username") String username);
+//    @Query(
+//            value = "SELECT " +
+//                    "   u.id," +
+//                    "   c.id," +
+//                    "   co.id," +
+//                    "   c.comicName," +
+//                    "   c.imgComic," +
+//                    "   co.quantity," +
+//                    "   co.totalPrice," +
+//                    "   tc.typeName " +
+//                    "FROM UserEntity u " +
+//                    "LEFT JOIN ComicOrder co ON u.id = co.userId " +
+//                    "INNER JOIN Comic c ON co.comicId = c.id " +
+//                    "INNER JOIN TypeComic tc ON c.typeComicId = tc.id " +
+//                    "WHERE u.username = :username " +
+//                    "AND co.status = 0 " +
+//                    "GROUP BY u.id, co.id, c.id " +
+//                    "ORDER BY co.updatedAt DESC"
+//    )
+//    List<Object[]> getAllByUsername(@Param("username") String username);
 
-    @Query(
-            value = "SELECT " +
-                    "tc.typeName, " +
-                    "SUM(co.quantity) AS totalSold, " +
-                    "SUM(co.totalPrice) AS totalIncome " +
-                    "FROM ComicOrder co " +
-                    "INNER JOIN Comic c ON co.comicId = c.id " +
-                    "INNER JOIN TypeComic tc ON c.typeComicId = tc.id " +
-                    "WHERE co.status = 1 " +
-                    "AND co.updatedAt >= :beforeMonth " +
-                    "GROUP BY tc.id " +
-                    "ORDER BY totalIncome"
-    )
-    List<Object[]> getStatisticMonth(@Param("beforeMonth")LocalDateTime oneMonth);
+//    @Query(
+//            value = "SELECT " +
+//                    "tc.typeName, " +
+//                    "SUM(co.quantity) AS totalSold, " +
+//                    "SUM(co.totalPrice) AS totalIncome " +
+//                    "FROM ComicOrder co " +
+//                    "INNER JOIN Comic c ON co.comicId = c.id " +
+//                    "INNER JOIN TypeComic tc ON c.typeComicId = tc.id " +
+//                    "WHERE co.status = 1 " +
+//                    "AND co.updatedAt >= :beforeMonth " +
+//                    "GROUP BY tc.id " +
+//                    "ORDER BY totalIncome"
+//    )
+//    List<Object[]> getStatisticMonth(@Param("beforeMonth")LocalDateTime oneMonth);
 }

@@ -14,4 +14,6 @@ public class ComicDetailDTO {
     private String imgComic;
     private Integer status;
     private Long typeComicId;
+    private String typeComicIds;
+    private String typeComicName;
 }

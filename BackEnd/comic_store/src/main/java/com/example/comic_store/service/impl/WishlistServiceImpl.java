@@ -27,12 +27,12 @@ public class WishlistServiceImpl implements WishlistService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Override
-    public Page<WishlistDTO> getWishListPage(WishlistDTO wishlistDTO) {
-        Pageable pageable = PageRequest.of(wishlistDTO.getPage(), wishlistDTO.getPageSize());
-        Page<Object[]> wishlistPage = wishlistRepository.getAllWishList(pageable, wishlistDTO.getUsername());
-        return wishlistMapper.toWishlistDTOPage(wishlistPage);
-    }
+//    @Override
+//    public Page<WishlistDTO> getWishListPage(WishlistDTO wishlistDTO) {
+//        Pageable pageable = PageRequest.of(wishlistDTO.getPage(), wishlistDTO.getPageSize());
+//        Page<Object[]> wishlistPage = wishlistRepository.getAllWishList(pageable, wishlistDTO.getUsername());
+//        return wishlistMapper.toWishlistDTOPage(wishlistPage);
+//    }
 
     @Override
     public ServiceResult<String> addToWishlist(WishlistDTO wishlistDTO) {

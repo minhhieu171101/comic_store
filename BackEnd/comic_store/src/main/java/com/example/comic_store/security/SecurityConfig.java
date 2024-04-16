@@ -42,6 +42,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/page-user").hasRole("ADMIN")
                 .requestMatchers("/api/comic-order/statistic").hasRole("ADMIN")
                 .requestMatchers("/api/comment/delete-comment").hasRole("ADMIN")
+                .requestMatchers("/resources/static/avatar/**").permitAll()
+                .requestMatchers("/resources/static/comic_img/**").permitAll()
                 .and()
                 .httpBasic();
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

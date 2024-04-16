@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(value = "/api/comic")
@@ -68,8 +70,9 @@ public class ComicController {
     }
 
     @PostMapping("/update-comic")
-    public ResponseEntity<ServiceResult<String>> updateComic(@RequestBody ComicAdminDTO comicAdminDTO) {
-        return new ResponseEntity<>(comicService.updateComic(comicAdminDTO), HttpStatus.OK);
+    public ResponseEntity<ServiceResult<String>> updateComic(@RequestPart("comic") ComicAdminDTO comicAdminDTO,
+                                                             @RequestPart(value = "file", required = false) MultipartFile file) {
+        return new ResponseEntity<>(comicService.updateComic(comicAdminDTO, file), HttpStatus.OK);
     }
 
     @PostMapping("/delete-comic")

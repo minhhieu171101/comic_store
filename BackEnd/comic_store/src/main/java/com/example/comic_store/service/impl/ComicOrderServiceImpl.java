@@ -30,11 +30,11 @@ public class ComicOrderServiceImpl implements ComicOrderService {
     @Autowired
     private StatisticMonthMapper statisticMonthMapper;
 
-    @Override
-    public List<ComicOrderDTO> getListComicOrder(String username) {
-        List<Object[]> comicOrders = comicOrderRepository.getAllByUsername(username);
-        return comicOrderMapper.comicOrderDTOList(comicOrders);
-    }
+//    @Override
+//    public List<ComicOrderDTO> getListComicOrder(String username) {
+//        List<Object[]> comicOrders = comicOrderRepository.getAllByUsername(username);
+//        return comicOrderMapper.comicOrderDTOList(comicOrders);
+//    }
 
     @Override
     public ServiceResult<String> createComicOrder(ComicOrderDTO comicOrderDTO) {
@@ -69,10 +69,10 @@ public class ComicOrderServiceImpl implements ComicOrderService {
         return result;
     }
 
-    @Override
-    public List<StatisticComicDTO> getStatisticComic() {
-        List<Object[]> statisticList = comicOrderRepository.getStatisticMonth(LocalDateTime.now().minusMonths(1l));
-        return statisticMonthMapper.toSatisticComicDTOList(statisticList);
-    }
+//    @Override
+//    public List<StatisticComicDTO> getStatisticComic() {
+//        List<Object[]> statisticList = comicOrderRepository.getStatisticMonth(LocalDateTime.now().minusMonths(1l));
+//        return statisticMonthMapper.toSatisticComicDTOList(statisticList);
+//    }
 
 }

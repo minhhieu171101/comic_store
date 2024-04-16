@@ -11,24 +11,24 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 
-    @Query(
-            value = "SELECT" +
-                    " w.id," +
-                    " c.id," +
-                    " ue.id," +
-                    " c.comicName," +
-                    " c.authorName," +
-                    " tc.typeName," +
-                    " c.contents," +
-                    " c.imgComic," +
-                    " ue.username " +
-                    "FROM Wishlist w " +
-                    "INNER JOIN Comic c ON w.comicId = c.id " +
-                    "INNER JOIN UserEntity ue ON w.createdBy = ue.id " +
-                    "INNER JOIN TypeComic tc ON c.typeComicId = tc.id " +
-                    "WHERE ue.username = :username " +
-                    "ORDER BY w.createdAt",
-            countQuery = "SELECT count(w) FROM Wishlist w"
-    )
-    Page<Object[]> getAllWishList(Pageable pageable, @Param("username") String username);
+//    @Query(
+//            value = "SELECT" +
+//                    " w.id," +
+//                    " c.id," +
+//                    " ue.id," +
+//                    " c.comicName," +
+//                    " c.authorName," +
+//                    " tc.typeName," +
+//                    " c.contents," +
+//                    " c.imgComic," +
+//                    " ue.username " +
+//                    "FROM Wishlist w " +
+//                    "INNER JOIN Comic c ON w.comicId = c.id " +
+//                    "INNER JOIN UserEntity ue ON w.createdBy = ue.id " +
+//                    "INNER JOIN TypeComic tc ON c.typeComicId = tc.id " +
+//                    "WHERE ue.username = :username " +
+//                    "ORDER BY w.createdAt",
+//            countQuery = "SELECT count(w) FROM Wishlist w"
+//    )
+//    Page<Object[]> getAllWishList(Pageable pageable, @Param("username") String username);
 }

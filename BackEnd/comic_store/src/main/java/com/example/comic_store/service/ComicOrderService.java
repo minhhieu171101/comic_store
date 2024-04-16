@@ -6,8 +6,8 @@ import com.example.comic_store.dto.StatisticComicDTO;
 import java.util.List;
 
 public interface ComicOrderService {
-    List<ComicOrderDTO> getListComicOrder(String username);
+//    List<ComicOrderDTO> getListComicOrder(String username);
     ServiceResult<String> createComicOrder(ComicOrderDTO comicOrderDTO);
     ServiceResult<String> deleteComicOrder(Long comicOrderId);
-    List<StatisticComicDTO> getStatisticComic();
+//    List<StatisticComicDTO> getStatisticComic();
 }

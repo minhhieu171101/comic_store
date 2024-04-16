@@ -5,6 +5,6 @@ import com.example.comic_store.dto.WishlistDTO;
 import org.springframework.data.domain.Page;
 
 public interface WishlistService {
-    Page<WishlistDTO> getWishListPage(WishlistDTO wishlistDTO);
+//    Page<WishlistDTO> getWishListPage(WishlistDTO wishlistDTO);
     ServiceResult<String> addToWishlist(WishlistDTO wishlistDTO);
 }

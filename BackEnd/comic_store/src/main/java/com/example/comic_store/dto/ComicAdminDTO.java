@@ -1,5 +1,6 @@
 package com.example.comic_store.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import lombok.Data;
 
@@ -10,9 +11,11 @@ public class ComicAdminDTO {
     private String authorName;
     private String imgComic;
     private String typeName;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
     private LocalDate releaseDate;
     private Long price;
     private Long sale;
     private String contents;
     private Long residualQuantity;
+    private String typeComicIds;
 }

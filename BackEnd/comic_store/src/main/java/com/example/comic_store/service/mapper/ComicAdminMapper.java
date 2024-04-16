@@ -22,7 +22,19 @@ public class ComicAdminMapper {
         comicAdminDTO.setComicName((String) object[1]);
         comicAdminDTO.setAuthorName((String) object[2]);
         comicAdminDTO.setImgComic((String) object[3]);
-        comicAdminDTO.setTypeName((String) object[4]);
+
+        // Chuẩn hóa tên thể loại truyện
+        String[] typeName = ((String) object[4]).split(",");
+        StringBuilder typeNameStandard = new StringBuilder();
+        for (int i = 0; i < typeName.length; i++) {
+            if (!typeName[i].equals(" ")) {
+                typeNameStandard.append(typeName[i]);
+            }
+            if (i < typeName.length - 1 && !typeName[i+1].equals(" ")) {
+                typeNameStandard.append(", ");
+            }
+        }
+        comicAdminDTO.setTypeName(typeNameStandard.toString());
         comicAdminDTO.setReleaseDate((LocalDate) object[5]);
         comicAdminDTO.setPrice((Long) object[6]);
         comicAdminDTO.setSale((Long) object[7]);

@@ -1,6 +1,5 @@
 package com.example.comic_store.service.impl;
 
-import com.example.comic_store.dto.PurchaseOrderDTO;
 import com.example.comic_store.dto.RegisterDTO;
 import com.example.comic_store.dto.ServiceResult;
 import com.example.comic_store.dto.UserDTO;
@@ -11,13 +10,18 @@ import com.example.comic_store.repository.RoleRepository;
 import com.example.comic_store.repository.UserRepository;
 import com.example.comic_store.repository.UserRoleRepository;
 import com.example.comic_store.service.UserService;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Random;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +29,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,6 +49,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Value("${AVATAR_FOLDER_PATH}")
+    private String folderImgPath;
+
+    @Value("${AVATAR_TARGET_FOLDER_PATH}")
+    private String folderTargetPath;
+
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     public String register(RegisterDTO registerDTO, String code) {
@@ -56,7 +67,7 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedAt(LocalDateTime.now());
         UserEntity userSave = userRepository.save(user);
 
-        Role role = roleRepository.findByRoleName("USER");
+        Role role = roleRepository.findByRoleName("ROLE_USER");
 
         UserRole userRole = new UserRole();
         userRole.setUserId(userSave.getId());
@@ -100,10 +111,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult<String> updateUserInfo(UserDTO userDTO) {
+    public ServiceResult<String> updateUserInfo(UserDTO userDTO, MultipartFile file) {
         UserEntity user = userRepository.findById(userDTO.getId()).orElse(null);
         if (user != null) {
-            user.setImgUser(userDTO.getImgUser());
             user.setUsername(userDTO.getUsername());
             user.setAddress(userDTO.getAddress());
             user.setBirthday(userDTO.getBirthday());
@@ -112,11 +122,37 @@ public class UserServiceImpl implements UserService {
             user.setFullName(userDTO.getFullName());
             user.setPhone(userDTO.getPhone());
             user.setUpdatedAt(LocalDateTime.now());
+            if (file != null) {
+                user.setImgUser(file.getOriginalFilename());
+                Path path = Path.of(folderImgPath + file.getOriginalFilename());
+                Path pathTarget = Path.of(folderTargetPath + file.getOriginalFilename());
+                try {
+                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(file.getInputStream(), pathTarget, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
             userRepository.save(user);
         }
         ServiceResult<String> result = new ServiceResult<>();
         result.setStatus(HttpStatus.OK);
         result.setMessage("Cập nhật thông tin người dùng thành công!");
         return result;
+    }
+
+    @Override
+    public ServiceResult<Boolean> checkExistUser(RegisterDTO registerDTO) {
+        ServiceResult<Boolean> serviceResult = new ServiceResult<>();
+        if (this.userRepository.existsByUsername(registerDTO.getUsername())) {
+            serviceResult.setData(true);
+            serviceResult.setMessage("Tài khoản đã tồn tại!");
+            serviceResult.setStatus(HttpStatus.BAD_REQUEST);
+            return serviceResult;
+        }
+        serviceResult.setData(false);
+        serviceResult.setMessage("Tài khoản chưa tồn tại!");
+        serviceResult.setStatus(HttpStatus.OK);
+        return serviceResult;
     }
 }

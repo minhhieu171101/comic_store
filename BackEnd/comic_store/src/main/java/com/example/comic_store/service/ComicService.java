@@ -6,6 +6,7 @@ import com.example.comic_store.dto.ComicDetailDTO;
 import com.example.comic_store.dto.ServiceResult;
 import java.util.List;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ComicService {
 
@@ -13,6 +14,6 @@ public interface ComicService {
     ComicDetailDTO getComicBy(Long id);
     Page<ComicDTO> getPageComic(int page, int pageSize, Long typeComicId);
     Page<ComicAdminDTO> getComicAdmin(int page, int pageSize);
-    ServiceResult<String> updateComic(ComicAdminDTO comicAdminDTO);
+    ServiceResult<String> updateComic(ComicAdminDTO comicAdminDTO, MultipartFile file);
     ServiceResult<String> deleteComic(ComicAdminDTO comicAdminDTO);
 }

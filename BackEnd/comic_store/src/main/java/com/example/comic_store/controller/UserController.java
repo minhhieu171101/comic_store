@@ -28,7 +28,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -189,8 +192,15 @@ public class UserController {
 
 
     @PostMapping("/update-user")
-    public ResponseEntity<ServiceResult<String>> updateUserInfo(@RequestBody UserDTO userDTO) {
-        ServiceResult<String> result = userService.updateUserInfo(userDTO);
+    public ResponseEntity<ServiceResult<String>> updateUserInfo(@RequestPart(value = "user") UserDTO userDTO,
+                                                                @RequestPart(value = "file", required = false) MultipartFile file) {
+        ServiceResult<String> result = userService.updateUserInfo(userDTO, file);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/verify_username")
+    public ResponseEntity<ServiceResult<Boolean>>  checkExistUser(@RequestBody RegisterDTO registerDTO) {
+        ServiceResult<Boolean> result = this.userService.checkExistUser(registerDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

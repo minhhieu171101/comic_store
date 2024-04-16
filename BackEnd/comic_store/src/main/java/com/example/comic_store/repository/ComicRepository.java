@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ComicRepository extends JpaRepository<Comic, Long> {
 
@@ -16,7 +17,16 @@ public interface ComicRepository extends JpaRepository<Comic, Long> {
     countQuery =    "SELECT COUNT(c) FROM Comic c")
     Page<Comic> getComicLandingPage(Pageable pageable);
 
-    Page<Comic> getAllByTypeComicIdOrderByCreatedAt(Pageable pageable, Long typeComicId);
+    @Query(
+            value = "SELECT c " +
+                    "FROM Comic c " +
+                    "WHERE c.typeComicIds LIKE CONCAT('%', :typeComicId, '%') " +
+                    "ORDER BY c.createdAt",
+            countQuery = "SELECT COUNT(c) " +
+                         "FROM Comic c " +
+                         "WHERE c.typeComicIds LIKE CONCAT('%', :typeComicId, '%') "
+    )
+    Page<Comic> getAllByTypeComicId(Pageable pageable, @Param("typeComicId") String typeComicId);
 
     @Query(
             value = "SELECT " +
@@ -24,14 +34,18 @@ public interface ComicRepository extends JpaRepository<Comic, Long> {
                     " c.comicName," +
                     " c.authorName," +
                     " c.imgComic," +
-                    " tc.typeName," +
+                    " GROUP_CONCAT(tc.typeName, ', ') AS typename," +
                     " c.releaseDate," +
                     " c.price, " +
                     " c.sale," +
                     " c.contents " +
                     "FROM Comic c " +
-                    "INNER JOIN TypeComic tc on c.typeComicId = tc.id " +
-                    "ORDER BY c.createdAt DESC",
+                    "LEFT JOIN TypeComic tc " +
+                    "ON CAST(FIND_IN_SET(CONCAT('s', tc.id, 'e') , c.typeComicIds) AS int) > CAST(0 AS int) " +
+                    "GROUP BY " +
+                    " c.id," +
+                    " c.typeComicIds " +
+                    " ORDER BY c.createdAt DESC",
             countQuery = "SELECT count(c.id) FROM Comic c"
     )
     Page<Object[]> getAllComic(Pageable pageable);
