@@ -184,4 +184,11 @@ public class ComicServiceImpl implements ComicService {
         result.setMessage("Xóa truyện không thành công!");
         return result;
     }
+
+    @Override
+    public Page<ComicDTO> searchComic(ComicDTO comicDTO) {
+        Pageable pageable = PageRequest.of(comicDTO.getPage(), comicDTO.getPageSize());
+        Page<Object[]> objects = comicRepository.searchComic(pageable, comicDTO.getSearchKey());
+        return comicMapper.toComicDTOPage(objects);
+    }
 }

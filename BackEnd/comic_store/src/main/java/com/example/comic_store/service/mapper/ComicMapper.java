@@ -2,6 +2,7 @@ package com.example.comic_store.service.mapper;
 
 import com.example.comic_store.commons.Common;
 import com.example.comic_store.dto.ComicAdminDTO;
+import com.example.comic_store.dto.ComicDTO;
 import com.example.comic_store.dto.ComicDetailDTO;
 import com.example.comic_store.entity.Comic;
 import java.time.LocalDate;
@@ -74,5 +75,31 @@ public class ComicMapper {
             comicDetailDTO.setTypeComicIds((String) object[10]);
         }
         return comicDetailDTO;
+    }
+
+    public ComicDTO toComicDTO(Object[] object) {
+        ComicDTO comicAdminDTO = new ComicDTO();
+        if (object != null) {
+            if (object.length == 1) {
+                object = (Object[]) object[0];
+            }
+            comicAdminDTO.setId((Long) object[0]);
+            comicAdminDTO.setComicName((String) object[1]);
+            comicAdminDTO.setAuthorName((String) object[2]);
+            comicAdminDTO.setContents((String) object[3]);
+            comicAdminDTO.setPrice((Long) object[4]);
+            comicAdminDTO.setSale((Long) object[5]);
+            comicAdminDTO.setResidualQuantity((Long) object[6]);
+            comicAdminDTO.setImgComic((String) object[7]);
+        }
+        return comicAdminDTO;
+    }
+
+    public Page<ComicDTO> toComicDTOPage(Page<Object[]> objectPage) {
+        List<ComicDTO> comicAdminDTOList = new ArrayList<>();
+        for (Object[] object: objectPage) {
+            comicAdminDTOList.add(toComicDTO(object));
+        }
+        return new PageImpl<>(comicAdminDTOList, objectPage.getPageable(), objectPage.getTotalElements());
     }
 }

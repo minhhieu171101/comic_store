@@ -85,4 +85,31 @@ public interface ComicRepository extends JpaRepository<Comic, Long> {
                     " c.typeComicIds "
     )
     Page<Object[]> getAllComic(Pageable pageable,@Param("searchKey") String searchKey);
+
+
+    @Query(
+            value = "SELECT " +
+                    " c.id, " +
+                    " c.comicName," +
+                    " c.authorName," +
+                    " c.contents, " +
+                    " c.price, " +
+                    " c.sale," +
+                    " c.residualQuantity," +
+                    " c.imgComic " +
+                    "FROM Comic c " +
+                    "WHERE 1 = 1 " +
+                    "AND (:searchKey IS NULL OR LOWER(c.comicName) LIKE CONCAT('%',LOWER(:searchKey), '%')) " +
+                    "GROUP BY " +
+                    " c.id " +
+                    " ORDER BY c.createdAt DESC",
+            countQuery = "SELECT COUNT(*)" +
+                    "FROM Comic c " +
+                    "LEFT JOIN TypeComic tc " +
+                    "WHERE 1 = 1 " +
+                    "AND (:searchKey IS NULL OR LOWER(c.comicName) LIKE CONCAT('%',LOWER(:searchKey), '%')) " +
+                    "GROUP BY " +
+                    " c.id"
+    )
+    Page<Object[]> searchComic(Pageable pageable, @Param("searchKey") String searchKey);
 }

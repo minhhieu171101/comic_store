@@ -79,4 +79,10 @@ public class ComicController {
     public ResponseEntity<ServiceResult<String>> deleteComic(@RequestBody ComicAdminDTO comicAdminDTO) {
         return new ResponseEntity<>(comicService.deleteComic(comicAdminDTO), HttpStatus.OK);
     }
+
+    @PostMapping("/comic-search")
+    public ResponseEntity<Page<ComicDTO>> searchComic(@RequestBody ComicDTO comicDTO) {
+        Page<ComicDTO> comicDTOPage = comicService.searchComic(comicDTO);
+        return new ResponseEntity<>(comicDTOPage, HttpStatus.OK);
+    }
 }

@@ -16,4 +16,5 @@ public interface ComicService {
     Page<ComicAdminDTO> getComicAdmin(ComicDTO comicDTO);
     ServiceResult<String> updateComic(ComicAdminDTO comicAdminDTO, MultipartFile file);
     ServiceResult<String> deleteComic(ComicAdminDTO comicAdminDTO);
+    Page<ComicDTO> searchComic(ComicDTO comicDTO);
 }
