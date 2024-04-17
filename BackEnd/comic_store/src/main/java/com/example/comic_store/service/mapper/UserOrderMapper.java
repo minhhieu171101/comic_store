@@ -13,14 +13,19 @@ public class UserOrderMapper {
 
     public PurchaseOrderDTO toPurchaseOrderDTO(Object[] object) {
         PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
-        purchaseOrderDTO.setUserId((Long) object[0]);
-        purchaseOrderDTO.setUserOrderId((Long) object[1]);
-        purchaseOrderDTO.setFullName((String) object[2]);
-        purchaseOrderDTO.setAddress((String) object[3]);
-        purchaseOrderDTO.setPhone((String) object[4]);
-        purchaseOrderDTO.setTotalPrice((Long) object[5]);
-        purchaseOrderDTO.setDateOrder((LocalDate) object[6]);
-        purchaseOrderDTO.setStatus((Integer) object[7]);
+        if (object != null) {
+            if (object.length == 1) {
+                object = (Object[]) object[0];
+            }
+            purchaseOrderDTO.setUserId((Long) object[0]);
+            purchaseOrderDTO.setUserOrderId((Long) object[1]);
+            purchaseOrderDTO.setFullName((String) object[2]);
+            purchaseOrderDTO.setAddress((String) object[3]);
+            purchaseOrderDTO.setPhone((String) object[4]);
+            purchaseOrderDTO.setTotalPrice((Long) object[5]);
+            purchaseOrderDTO.setDateOrder((LocalDate) object[6]);
+            purchaseOrderDTO.setStatus((Integer) object[7]);
+        }
         return purchaseOrderDTO;
     }
 

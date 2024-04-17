@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Page<CommentDTO> getPageComment(CommentDTO commentDTO) {
         Pageable pageable = PageRequest.of(commentDTO.getPage(), commentDTO.getPageSize());
-        Page<Object[]> commentPage = commentRepository.getCommentPage(pageable);
+        Page<Object[]> commentPage = commentRepository.getCommentPage(pageable, commentDTO.getSearchKey());
         return commentMapper.toCommentDTOPAge(commentPage);
     }
 

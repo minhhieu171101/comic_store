@@ -22,11 +22,11 @@ public class ComicOrderController {
     @Autowired
     private ComicOrderService comicOrderService;
 
-//    @PostMapping("/order-list")
-//    public ResponseEntity<List<ComicOrderDTO>> getListComicOrder(@RequestBody UserDTO userDTO) {
-//        List<ComicOrderDTO> comicOrderDTOList = comicOrderService.getListComicOrder(userDTO.getUsername());
-//        return  new ResponseEntity<>(comicOrderDTOList, HttpStatus.OK);
-//    }
+    @PostMapping("/order-list")
+    public ResponseEntity<List<ComicOrderDTO>> getListComicOrder(@RequestBody UserDTO userDTO) {
+        List<ComicOrderDTO> comicOrderDTOList = comicOrderService.getListComicOrder(userDTO.getUsername());
+        return  new ResponseEntity<>(comicOrderDTOList, HttpStatus.OK);
+    }
 
     @PostMapping("/create-order")
     public ResponseEntity<ServiceResult<String>> createComicOrder(@RequestBody ComicOrderDTO comicOrderDTO) {
@@ -39,10 +39,10 @@ public class ComicOrderController {
         ServiceResult<String> result = comicOrderService.deleteComicOrder(comicOrderDTO.getComicOrderId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-//
-//    @GetMapping("/statistic")
-//    public ResponseEntity<List<StatisticComicDTO>> getStatisticComic() {
-//        List<StatisticComicDTO> statisticComicDTOList = comicOrderService.getStatisticComic();
-//        return new ResponseEntity<>(statisticComicDTOList, HttpStatus.OK);
-//    }
+
+    @GetMapping("/statistic")
+    public ResponseEntity<List<StatisticComicDTO>> getStatisticComic() {
+        List<StatisticComicDTO> statisticComicDTOList = comicOrderService.getStatisticComic();
+        return new ResponseEntity<>(statisticComicDTOList, HttpStatus.OK);
+    }
 }

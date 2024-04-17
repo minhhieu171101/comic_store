@@ -65,7 +65,7 @@ public class ComicController {
     @PostMapping("/comic-management-admin")
     public ResponseEntity<Page<ComicAdminDTO>> getPageComicAdmin(@RequestBody ComicDTO comicDTO) {
         Page<ComicAdminDTO> comicAdminDTOPage = comicService
-                .getComicAdmin(comicDTO.getPage(), comicDTO.getPageSize());
+                .getComicAdmin(comicDTO);
         return new ResponseEntity<>(comicAdminDTOPage, HttpStatus.OK);
     }
 

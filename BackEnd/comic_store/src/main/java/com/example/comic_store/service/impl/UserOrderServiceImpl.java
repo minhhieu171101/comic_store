@@ -4,14 +4,17 @@ import com.example.comic_store.dto.PurchaseOrderDTO;
 import com.example.comic_store.dto.ServiceResult;
 import com.example.comic_store.dto.UserOrderDTO;
 import com.example.comic_store.entity.ComicOrder;
+import com.example.comic_store.entity.UserEntity;
 import com.example.comic_store.entity.UserOrder;
 import com.example.comic_store.repository.ComicOrderRepository;
 import com.example.comic_store.repository.UserOrderRepository;
+import com.example.comic_store.repository.UserRepository;
 import com.example.comic_store.service.UserOrderService;
 import com.example.comic_store.service.mapper.UserOrderMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +37,9 @@ public class UserOrderServiceImpl implements UserOrderService {
 
     @Autowired
     private UserOrderMapper userOrderMapper;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public ServiceResult<String> saveUserOrder(UserOrderDTO userOrderDTO) {
@@ -61,7 +67,38 @@ public class UserOrderServiceImpl implements UserOrderService {
     @Override
     public Page<PurchaseOrderDTO> getPagePurchaseOrder(PurchaseOrderDTO purchaseOrderDTO) {
         Pageable pageable = PageRequest.of(purchaseOrderDTO.getPage(), purchaseOrderDTO.getPageSize());
-        Page<Object[]> objectPage = userOrderRepository.getAllPurchaseOrder(pageable);
+        Page<Object[]> objectPage = userOrderRepository.getAllPurchaseOrder(pageable, purchaseOrderDTO.getSearchKey());
+        return userOrderMapper.toPurchaseOrderDTOPage(objectPage);
+    }
+
+    @Override
+    public ServiceResult<String> updateUserOrder(PurchaseOrderDTO purchaseOrderDTO) {
+        UserOrder userOrder = userOrderRepository.findById(purchaseOrderDTO.getUserOrderId()).orElse(null);
+        ServiceResult<String> result = new ServiceResult<>();
+        if (userOrder != null) {
+            userOrder.setStatus(purchaseOrderDTO.getStatus());
+            userOrderRepository.save(userOrder);
+            result.setData("sucessfully!");
+            result.setMessage("Cập nhật trạng thái thành công!");
+            result.setStatus(HttpStatus.OK);
+            return result;
+        }
+        result.setData("failed!");
+        result.setMessage("Cập nhật trạng thái thất bại!");
+        result.setStatus(HttpStatus.BAD_REQUEST);
+        return result;
+    }
+
+    @Override
+    public Page<PurchaseOrderDTO> getPagePurchaseOrderUser(PurchaseOrderDTO purchaseOrderDTO) {
+        Pageable pageable = PageRequest.of(purchaseOrderDTO.getPage(), purchaseOrderDTO.getPageSize());
+        Optional<UserEntity> userEntity = userRepository.findByUsername(purchaseOrderDTO.getUsername());
+        userEntity.ifPresent(entity -> purchaseOrderDTO.setUserId(entity.getId()));
+        Page<Object[]> objectPage = userOrderRepository.getAllPurchaseOrderUser(
+                pageable,
+                purchaseOrderDTO.getUserId(),
+                purchaseOrderDTO.getSearchKey()
+        );
         return userOrderMapper.toPurchaseOrderDTOPage(objectPage);
     }
 }

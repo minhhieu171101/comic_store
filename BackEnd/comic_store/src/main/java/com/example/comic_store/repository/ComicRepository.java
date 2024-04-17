@@ -2,7 +2,6 @@ package com.example.comic_store.repository;
 
 import com.example.comic_store.entity.Comic;
 
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +15,29 @@ public interface ComicRepository extends JpaRepository<Comic, Long> {
                     "ORDER BY c.createdAt DESC ",
     countQuery =    "SELECT COUNT(c) FROM Comic c")
     Page<Comic> getComicLandingPage(Pageable pageable);
+
+    @Query(
+            value = "SELECT " +
+                    " c.id, " +
+                    " c.comicName," +
+                    " c.authorName," +
+                    " c.imgComic," +
+                    " GROUP_CONCAT(tc.typeName, ', ') AS typeName," +
+                    " c.price, " +
+                    " c.sale," +
+                    " c.contents," +
+                    " c.residualQuantity," +
+                    " c.status," +
+                    " c.typeComicIds " +
+                    "FROM Comic c " +
+                    "LEFT JOIN TypeComic tc " +
+                    "ON CAST(FIND_IN_SET(CONCAT('s', tc.id, 'e') , c.typeComicIds) AS int) > CAST(0 AS int) " +
+                    "WHERE c.id = :id " +
+                    "GROUP BY " +
+                    " c.id," +
+                    " c.typeComicIds "
+    )
+    Object[] getComicBy(@Param("id") Long id);
 
     @Query(
             value = "SELECT c " +
@@ -34,7 +56,7 @@ public interface ComicRepository extends JpaRepository<Comic, Long> {
                     " c.comicName," +
                     " c.authorName," +
                     " c.imgComic," +
-                    " GROUP_CONCAT(tc.typeName, ', ') AS typename," +
+                    " GROUP_CONCAT(tc.typeName, ', ') AS typeName," +
                     " c.releaseDate," +
                     " c.price, " +
                     " c.sale," +
@@ -42,11 +64,25 @@ public interface ComicRepository extends JpaRepository<Comic, Long> {
                     "FROM Comic c " +
                     "LEFT JOIN TypeComic tc " +
                     "ON CAST(FIND_IN_SET(CONCAT('s', tc.id, 'e') , c.typeComicIds) AS int) > CAST(0 AS int) " +
+                    "WHERE 1 = 1 " +
+                    "AND (:searchKey IS NULL OR LOWER(c.comicName) LIKE CONCAT('%',LOWER(:searchKey), '%') " +
+                    "OR LOWER(c.authorName) LIKE CONCAT('%',LOWER(:searchKey), '%')" +
+                    "OR LOWER(tc.typeName) LIKE CONCAT('%',LOWER(:searchKey), '%')) " +
                     "GROUP BY " +
                     " c.id," +
                     " c.typeComicIds " +
                     " ORDER BY c.createdAt DESC",
-            countQuery = "SELECT count(c.id) FROM Comic c"
+            countQuery = "SELECT COUNT(*)" +
+                    "FROM Comic c " +
+                    "LEFT JOIN TypeComic tc " +
+                    "ON CAST(FIND_IN_SET(CONCAT('s', tc.id, 'e') , c.typeComicIds) AS int) > CAST(0 AS int) " +
+                    "WHERE 1 = 1 " +
+                    "AND (:searchKey IS NULL OR LOWER(c.comicName) LIKE CONCAT('%',LOWER(:searchKey), '%') " +
+                    "OR LOWER(c.authorName) LIKE CONCAT('%',LOWER(:searchKey), '%')" +
+                    "OR LOWER(tc.typeName) LIKE CONCAT('%',LOWER(:searchKey), '%')) " +
+                    "GROUP BY " +
+                    " c.id," +
+                    " c.typeComicIds "
     )
-    Page<Object[]> getAllComic(Pageable pageable);
+    Page<Object[]> getAllComic(Pageable pageable,@Param("searchKey") String searchKey);
 }

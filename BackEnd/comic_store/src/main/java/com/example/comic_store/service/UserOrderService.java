@@ -8,4 +8,6 @@ import org.springframework.data.domain.Page;
 public interface UserOrderService {
     ServiceResult<String> saveUserOrder(UserOrderDTO userOrderDTO);
     Page<PurchaseOrderDTO> getPagePurchaseOrder(PurchaseOrderDTO purchaseOrderDTO);
+    ServiceResult<String> updateUserOrder(PurchaseOrderDTO purchaseOrderDTO);
+    Page<PurchaseOrderDTO> getPagePurchaseOrderUser(PurchaseOrderDTO purchaseOrderDTO);
 }

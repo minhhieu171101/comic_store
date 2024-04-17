@@ -14,14 +14,19 @@ public class CommentMapper {
 
     CommentDTO toCommentDTO(Object[] object) {
         CommentDTO commentDTO = new CommentDTO();
-        commentDTO.setId((Long) object[0]);
-        commentDTO.setUserId((Long) object[1]);
-        commentDTO.setComicId((Long) object[2]);
-        commentDTO.setFullName((String) object[3]);
-        commentDTO.setComicName((String) object[4]);
-        commentDTO.setContent((String) object[5]);
-        commentDTO.setDatePost((LocalDateTime) object[6]);
-        commentDTO.setImgComment((String) object[7]);
+        if (object != null) {
+            if (object.length == 1) {
+                object = (Object[]) object[0];
+            }
+            commentDTO.setId((Long) object[0]);
+            commentDTO.setUserId((Long) object[1]);
+            commentDTO.setComicId((Long) object[2]);
+            commentDTO.setFullName((String) object[3]);
+            commentDTO.setComicName((String) object[4]);
+            commentDTO.setContent((String) object[5]);
+            commentDTO.setDatePost((LocalDateTime) object[6]);
+            commentDTO.setImgComment((String) object[7]);
+        }
         return commentDTO;
     }
 

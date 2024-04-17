@@ -3,8 +3,10 @@ package com.example.comic_store.service.impl;
 import com.example.comic_store.dto.ComicOrderDTO;
 import com.example.comic_store.dto.ServiceResult;
 import com.example.comic_store.dto.StatisticComicDTO;
+import com.example.comic_store.entity.Comic;
 import com.example.comic_store.entity.ComicOrder;
 import com.example.comic_store.repository.ComicOrderRepository;
+import com.example.comic_store.repository.ComicRepository;
 import com.example.comic_store.service.ComicOrderService;
 import com.example.comic_store.service.mapper.ComicOrderMapper;
 import com.example.comic_store.service.mapper.StatisticMonthMapper;
@@ -30,22 +32,34 @@ public class ComicOrderServiceImpl implements ComicOrderService {
     @Autowired
     private StatisticMonthMapper statisticMonthMapper;
 
-//    @Override
-//    public List<ComicOrderDTO> getListComicOrder(String username) {
-//        List<Object[]> comicOrders = comicOrderRepository.getAllByUsername(username);
-//        return comicOrderMapper.comicOrderDTOList(comicOrders);
-//    }
+    @Autowired
+    private ComicRepository comicRepository;
+
+    @Override
+    public List<ComicOrderDTO> getListComicOrder(String username) {
+        List<Object[]> comicOrders = comicOrderRepository.getAllByUsername(username);
+        return comicOrderMapper.comicOrderDTOList(comicOrders);
+    }
 
     @Override
     public ServiceResult<String> createComicOrder(ComicOrderDTO comicOrderDTO) {
         ComicOrder comicOrder = comicOrderMapper.toComicOrder(comicOrderDTO);
+        ServiceResult<String> result = new ServiceResult<>();
+
         comicOrder.setCreatedAt(LocalDateTime.now());
         comicOrder.setUpdatedAt(LocalDateTime.now());
         comicOrder.setUpdatedBy(comicOrderDTO.getUserId());
         comicOrder.setStatus(0L);
-
+        Comic comic = comicRepository.findById(comicOrderDTO.getComicId()).orElse(null);
+        if (comic != null && comicOrderDTO.getQuantity() < comic.getResidualQuantity()) {
+            comic.setResidualQuantity(comic.getResidualQuantity() - comicOrderDTO.getQuantity());
+            comicRepository.save(comic);
+        } else {
+            result.setStatus(HttpStatus.BAD_REQUEST);
+            result.setData("Create Failed!");
+            result.setMessage("Thêm vào giỏ hàng thất bại!");
+        }
         comicOrderRepository.save(comicOrder);
-        ServiceResult<String> result = new ServiceResult<>();
         result.setStatus(HttpStatus.OK);
         result.setData("Create successfully!");
         result.setMessage("Thêm vào giỏ hàng thành công!");
@@ -69,10 +83,10 @@ public class ComicOrderServiceImpl implements ComicOrderService {
         return result;
     }
 
-//    @Override
-//    public List<StatisticComicDTO> getStatisticComic() {
-//        List<Object[]> statisticList = comicOrderRepository.getStatisticMonth(LocalDateTime.now().minusMonths(1l));
-//        return statisticMonthMapper.toSatisticComicDTOList(statisticList);
-//    }
+    @Override
+    public List<StatisticComicDTO> getStatisticComic() {
+        List<Object[]> statisticList = comicOrderRepository.getStatisticMonth(LocalDateTime.now().minusMonths(1l));
+        return statisticMonthMapper.toSatisticComicDTOList(statisticList);
+    }
 
 }

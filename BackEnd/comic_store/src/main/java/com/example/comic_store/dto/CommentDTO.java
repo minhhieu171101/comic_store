@@ -15,4 +15,5 @@ public class CommentDTO {
     private String imgComment;
     private int page;
     private int pageSize;
+    private String searchKey;
 }

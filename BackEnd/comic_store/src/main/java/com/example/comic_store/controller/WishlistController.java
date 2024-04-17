@@ -19,11 +19,11 @@ public class WishlistController {
     @Autowired
     private WishlistService wishlistService;
 
-//    @PostMapping("/page-wishlist")
-//    public ResponseEntity<Page<WishlistDTO>> getPageUser(@RequestBody WishlistDTO wishlistDTO) {
-//        Page<WishlistDTO> userDTOPage = wishlistService.getWishListPage(wishlistDTO);
-//        return new ResponseEntity<>(userDTOPage, HttpStatus.OK);
-//    }
+    @PostMapping("/page-wishlist")
+    public ResponseEntity<Page<WishlistDTO>> getPageUser(@RequestBody WishlistDTO wishlistDTO) {
+        Page<WishlistDTO> userDTOPage = wishlistService.getWishListPage(wishlistDTO);
+        return new ResponseEntity<>(userDTOPage, HttpStatus.OK);
+    }
 
     @PostMapping("/add-wishlist")
     public ResponseEntity<ServiceResult<String>> updateComment(@RequestBody WishlistDTO wishlistDTO) {

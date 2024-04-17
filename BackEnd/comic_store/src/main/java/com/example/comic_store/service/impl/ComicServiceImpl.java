@@ -9,7 +9,7 @@ import com.example.comic_store.entity.TypeComic;
 import com.example.comic_store.repository.ComicRepository;
 import com.example.comic_store.repository.TypeComicRepository;
 import com.example.comic_store.service.ComicService;
-import com.example.comic_store.service.mapper.ComicAdminMapper;
+import com.example.comic_store.service.mapper.ComicMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,7 +41,7 @@ public class ComicServiceImpl implements ComicService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private ComicAdminMapper comicAdminMapper;
+    private ComicMapper comicMapper;
 
     @Autowired
     private TypeComicRepository typeComicRepository;
@@ -62,8 +62,9 @@ public class ComicServiceImpl implements ComicService {
 
     @Override
     public ComicDetailDTO getComicBy(Long id) {
-        Comic comic = comicRepository.findById(id).orElse(null);
-        return modelMapper.map(comic, ComicDetailDTO.class);
+        Object[] object = comicRepository.getComicBy(id);
+        ComicDetailDTO comicDetailDTO = comicMapper.toComicDetailDTO(object);
+        return modelMapper.map(comicDetailDTO, ComicDetailDTO.class);
     }
 
     @Override
@@ -79,10 +80,10 @@ public class ComicServiceImpl implements ComicService {
     }
 
     @Override
-    public Page<ComicAdminDTO> getComicAdmin(int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Object[]> comicPage = comicRepository.getAllComic(pageable);
-        return comicAdminMapper.toComicAdminPageDTO(comicPage);
+    public Page<ComicAdminDTO> getComicAdmin(ComicDTO comicDTO) {
+        Pageable pageable = PageRequest.of(comicDTO.getPage(), comicDTO.getPageSize());
+        Page<Object[]> comicPage = comicRepository.getAllComic(pageable, comicDTO.getSearchKey());
+        return comicMapper.toComicAdminPageDTO(comicPage);
     }
 
     @Override
@@ -131,7 +132,7 @@ public class ComicServiceImpl implements ComicService {
             typeComicsExist.addAll(typeComicsReturn);
         }
 
-        Comic comic = comicAdminMapper.toComic(comicAdminDTO);
+        Comic comic = comicMapper.toComic(comicAdminDTO);
 
         // Cập nhật thể loại truyện
         comic.setTypeComicIds(

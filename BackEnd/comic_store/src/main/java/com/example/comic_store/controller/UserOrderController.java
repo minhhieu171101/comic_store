@@ -20,15 +20,27 @@ public class UserOrderController {
     @Autowired
     private UserOrderService userOrderService;
 
-    @PostMapping("/order")
-    public ResponseEntity<ServiceResult<String>> saveOrder(@RequestBody UserOrderDTO userOrderDTO) {
+    @PostMapping("/create-order")
+    public ResponseEntity<ServiceResult<String>> createOrder(@RequestBody UserOrderDTO userOrderDTO) {
         ServiceResult<String> result = userOrderService.saveUserOrder(userOrderDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("/purchase-order")
-    public ResponseEntity<Page<PurchaseOrderDTO>> saveOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
+    public ResponseEntity<Page<PurchaseOrderDTO>> getPagePurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
         Page<PurchaseOrderDTO> result = userOrderService.getPagePurchaseOrder(purchaseOrderDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/update-order")
+    public ResponseEntity<ServiceResult<String>> updateOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
+        ServiceResult<String> result = userOrderService.updateUserOrder(purchaseOrderDTO);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/purchase-order-user")
+    public ResponseEntity<Page<PurchaseOrderDTO>> getPurchaseOrderUser(@RequestBody PurchaseOrderDTO purchaseOrderDTO) {
+        Page<PurchaseOrderDTO> result = userOrderService.getPagePurchaseOrderUser(purchaseOrderDTO);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

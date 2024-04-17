@@ -10,6 +10,7 @@ import com.example.comic_store.repository.RoleRepository;
 import com.example.comic_store.repository.UserRepository;
 import com.example.comic_store.repository.UserRoleRepository;
 import com.example.comic_store.service.UserService;
+import com.example.comic_store.service.mapper.UserMapper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Value("${AVATAR_FOLDER_PATH}")
     private String folderImgPath;
@@ -103,11 +106,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserDTO> getUserPage(UserDTO userDTO) {
-        Pageable pageable = PageRequest.of(userDTO.getPage(),
-                userDTO.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<UserEntity> userEntityPage = userRepository.findAll(pageable);
-        return userEntityPage.map(element -> modelMapper.map(element, UserDTO.class));
+        Pageable pageable = PageRequest.of(userDTO.getPage(), userDTO.getPageSize());
+        Page<Object[]> userEntityPage = userRepository.getPageUser(pageable, userDTO.getSearchKey());
+        return userMapper.toUserDTOPage(userEntityPage);
     }
 
     @Override

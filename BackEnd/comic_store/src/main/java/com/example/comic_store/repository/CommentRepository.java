@@ -24,10 +24,20 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                     "FROM Comment c " +
                     "INNER JOIN UserEntity ue ON c.userId = ue.id " +
                     "INNER JOIN Comic cm ON c.comicId = cm.id " +
+                    "WHERE 1 = 1 " +
+                    "AND (:searchKey IS NULL OR LOWER(ue.fullName) LIKE CONCAT('%',LOWER(:searchKey), '%') " +
+                    "OR LOWER(cm.comicName) LIKE CONCAT('%',LOWER(:searchKey), '%')) " +
                     "ORDER BY c.datePost",
-            countQuery = "SELECT COUNT(c.id) FROM Comment c"
+            countQuery =
+                    "SELECT COUNT(*) " +
+                    "FROM Comment c " +
+                    "INNER JOIN UserEntity ue ON c.userId = ue.id " +
+                    "INNER JOIN Comic cm ON c.comicId = cm.id " +
+                    "WHERE 1 = 1 " +
+                    "AND (:searchKey IS NULL OR LOWER(ue.fullName) LIKE CONCAT('%',LOWER(:searchKey), '%') " +
+                    "OR LOWER(cm.comicName) LIKE CONCAT('%',LOWER(:searchKey), '%'))"
     )
-    Page<Object[]> getCommentPage(Pageable pageable);
+    Page<Object[]> getCommentPage(Pageable pageable, @Param("searchKey") String searchKey);
 
     @Query(
             value = "SELECT" +

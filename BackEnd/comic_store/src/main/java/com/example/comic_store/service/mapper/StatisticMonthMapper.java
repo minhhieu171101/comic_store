@@ -10,9 +10,14 @@ public class StatisticMonthMapper {
 
     public StatisticComicDTO toStatisticComicDTO(Object[] object) {
         StatisticComicDTO statisticComicDTO = new StatisticComicDTO();
-        statisticComicDTO.setComicTypeName((String) object[0]);
-        statisticComicDTO.setTotalSold((Long) object[1]);
-        statisticComicDTO.setTotalIncome((Long) object[2]);
+        if (object != null) {
+            if (object.length == 1) {
+                object = (Object[]) object[0];
+            }
+            statisticComicDTO.setComicTypeName((String) object[0]);
+            statisticComicDTO.setTotalSold((Long) object[1]);
+            statisticComicDTO.setTotalIncome((Long) object[2]);
+        }
         return statisticComicDTO;
     }
 

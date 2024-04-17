@@ -13,7 +13,7 @@ public interface ComicService {
     List<ComicDTO> getListComicLanding(int page, int pageSize);
     ComicDetailDTO getComicBy(Long id);
     Page<ComicDTO> getPageComic(int page, int pageSize, Long typeComicId);
-    Page<ComicAdminDTO> getComicAdmin(int page, int pageSize);
+    Page<ComicAdminDTO> getComicAdmin(ComicDTO comicDTO);
     ServiceResult<String> updateComic(ComicAdminDTO comicAdminDTO, MultipartFile file);
     ServiceResult<String> deleteComic(ComicAdminDTO comicAdminDTO);
 }

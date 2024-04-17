@@ -16,4 +16,5 @@ public class UserDTO {
     private Integer gender;
     private int page;
     private int pageSize;
+    private String searchKey;
 }

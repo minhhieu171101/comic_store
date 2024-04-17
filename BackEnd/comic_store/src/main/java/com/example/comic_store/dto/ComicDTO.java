@@ -16,4 +16,5 @@ public class ComicDTO {
     private int pageSize;
     private Long typeComicId;
     private String typeComicIds;
+    private String searchKey;
 }

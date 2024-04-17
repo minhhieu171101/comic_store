@@ -15,4 +15,6 @@ public class PurchaseOrderDTO {
     private Integer status;
     private int page;
     private int pageSize;
+    private String username;
+    private String searchKey;
 }

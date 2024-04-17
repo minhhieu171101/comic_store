@@ -1,5 +1,6 @@
 package com.example.comic_store.service.mapper;
 
+import com.example.comic_store.commons.Common;
 import com.example.comic_store.dto.WishlistDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +13,20 @@ public class WishlistMapper {
 
     public WishlistDTO toWishlistDTO(Object[] object) {
         WishlistDTO wishlistDTO = new WishlistDTO();
-        wishlistDTO.setId((Long) object[0]);
-        wishlistDTO.setComicId((Long) object[1]);
-        wishlistDTO.setCreatedBy((Long) object[2]);
-        wishlistDTO.setComicName((String) object[3]);
-        wishlistDTO.setComicName((String) object[4]);
-        wishlistDTO.setTypeComicName((String) object[5]);
-        wishlistDTO.setContents((String) object[6]);
-        wishlistDTO.setComicImg((String) object[7]);
-        wishlistDTO.setUsername((String) object[7]);
+        if (object != null) {
+            if (object.length == 1) {
+                object = (Object[]) object[0];
+            }
+            wishlistDTO.setId((Long) object[0]);
+            wishlistDTO.setComicId((Long) object[1]);
+            wishlistDTO.setCreatedBy((Long) object[2]);
+            wishlistDTO.setComicName((String) object[3]);
+            wishlistDTO.setComicName((String) object[4]);
+            wishlistDTO.setTypeComicName(Common.convertTypeName(((String) object[5])));
+            wishlistDTO.setContents((String) object[6]);
+            wishlistDTO.setComicImg((String) object[7]);
+            wishlistDTO.setUsername((String) object[7]);
+        }
         return wishlistDTO;
     }
 
